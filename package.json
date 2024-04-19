@@ -1,0 +1,35 @@
+{
+  "name": "fastify-asyncforge",
+  "version": "0.0.1",
+  "description": "helpers to get fastify request/reply and app",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && borp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mcollina/fastify-asyncforge.git"
+  },
+  "keywords": [
+    "fastify",
+    "asynclocalstorage",
+    "request",
+    "reply"
+  ],
+  "author": "Matteo Collina <hello@matteocollina.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mcollina/fastify-asyncforge/issues"
+  },
+  "homepage": "https://github.com/mcollina/fastify-asyncforge#readme",
+  "devDependencies": {
+    "@matteo.collina/tspl": "^0.1.1",
+    "borp": "^0.11.0",
+    "fastify": "^4.26.2",
+    "standard": "^17.1.0"
+  },
+  "dependencies": {
+    "asyncforge": "^0.1.2",
+    "fastify-plugin": "^4.5.1"
+  }
+}
