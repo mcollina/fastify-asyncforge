@@ -1,6 +1,6 @@
 {
   "name": "fastify-asyncforge",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "helpers to get fastify request/reply and app",
   "main": "index.js",
   "scripts": {
