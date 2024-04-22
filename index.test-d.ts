@@ -48,4 +48,6 @@ expectError<FastifyBaseLogger>(logger<object>());
 expectError<FastifyBaseLogger>({});
 
 // start
-expectType<Promise<FastifyInstance>>(start());
+expectType<void>(await start(fastifyInstance));
+expectError<void>(await start({ invalid: "object" }));
+expectError<void>(await start());
