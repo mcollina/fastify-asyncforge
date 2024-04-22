@@ -1,4 +1,3 @@
-import { memo } from "asyncforge";
 import {
   type FastifyInstance,
   type FastifyBaseLogger,
@@ -7,12 +6,10 @@ import {
 } from "fastify";
 
 declare namespace fastifyasyncforge {
-  type MemoFn<T> = ReturnType<typeof memo<T>>;
-
-  export const app: MemoFn<FastifyInstance>;
-  export const request: MemoFn<FastifyRequest>;
-  export const reply: MemoFn<FastifyReply>;
-  export const logger: MemoFn<FastifyBaseLogger>;
+  export function app<T extends FastifyInstance>(): T;
+  export function request<T extends FastifyRequest>(): T;
+  export function reply<T extends FastifyReply>(): T;
+  export function logger<T extends FastifyBaseLogger>(): T;
 }
 
 export = fastifyasyncforge;
