@@ -11,12 +11,14 @@ npm i fastify fastify-asyncforge
 ```js
 // App.js
 import fastify from 'fastify'
+import { start } from 'fastify-asyncforge'
 import doWork from './do-work.mjs'
 
 const app = fastify({
   logger: true
 })
-app.register(import('fastify-asyncforge'))
+
+await start(app)
 
 app.decorate('foo', 'bar')
 app.decorateRequest('a')

@@ -8,10 +8,7 @@ const request = memo()
 const reply = memo()
 const logger = memo()
 
-module.exports = fp(async function (fastify, opts) {
-  app.set(fastify)
-  logger.set(fastify.log)
-
+const fastifyAsyncForge = fp(function (fastify, opts, next) {
   fastify.addHook('onRequest', async function (req, res) {
     setAll({
       [app.key]: this,
@@ -20,8 +17,20 @@ module.exports = fp(async function (fastify, opts) {
       [logger.key]: req.log
     })
   })
+  next()
 })
 
+function start (fastify) {
+  setAll({
+    [app.key]: fastify,
+    [logger.key]: fastify.log
+  })
+
+  return fastify.register(fastifyAsyncForge)
+}
+
+module.exports = fastifyAsyncForge
+module.exports.start = start
 module.exports.app = app
 module.exports.request = request
 module.exports.reply = reply

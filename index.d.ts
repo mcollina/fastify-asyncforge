@@ -11,6 +11,7 @@ declare namespace fastifyasyncforge {
   export function request<T extends FastifyRequest>(): T;
   export function reply<T extends FastifyReply>(): T;
   export function logger<T extends FastifyBaseLogger>(): T;
+  export function start<T extends FastifyInstance>(): Promise<T>;
 }
 
 declare function fastifyasyncforge(): FastifyPluginCallback;

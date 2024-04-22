@@ -2,11 +2,16 @@
 
 const fastify = require('fastify')
 const doWork = require('./do-work')
+const { logger, start } = require('../index')
 
 const app = fastify({
   logger: true
 })
 app.register(require('../index'))
+
+start(app)
+
+logger().info('hello')
 
 app.decorate('foo', 'bar')
 app.decorateRequest('a')
