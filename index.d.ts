@@ -3,6 +3,7 @@ import {
   type FastifyBaseLogger,
   type FastifyReply,
   type FastifyRequest,
+  type FastifyPluginCallback,
 } from "fastify";
 
 declare namespace fastifyasyncforge {
@@ -12,4 +13,5 @@ declare namespace fastifyasyncforge {
   export function logger<T extends FastifyBaseLogger>(): T;
 }
 
+declare function fastifyasyncforge(): FastifyPluginCallback;
 export = fastifyasyncforge;
