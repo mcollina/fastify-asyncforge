@@ -1,5 +1,5 @@
 import { expectAssignable, expectError, expectType } from "tsd";
-import { app, logger, reply, request } from ".";
+import fastifyasyncforge, { app, logger, reply, request } from ".";
 import fastify, {
   type FastifyInstance,
   type FastifyBaseLogger,
@@ -7,9 +7,12 @@ import fastify, {
   type FastifyReply,
   type RawServerDefault,
   type RouteGenericInterface,
+  type FastifyPluginCallback,
 } from "fastify";
 
 const fastifyInstance = fastify();
+expectAssignable<FastifyInstance>(fastifyInstance.register(fastifyasyncforge));
+expectAssignable<FastifyPluginCallback>(fastifyasyncforge);
 
 // app
 expectAssignable<FastifyInstance>(fastifyInstance);
