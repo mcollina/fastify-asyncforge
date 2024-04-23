@@ -1,4 +1,4 @@
-import { expectAssignable, expectError, expectType, expectNever } from "tsd";
+import { expectAssignable, expectError, expectType } from "tsd";
 import fastifyasyncforge, { app, logger, reply, request, start } from ".";
 import fastify, {
   type FastifyInstance,
