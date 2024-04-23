@@ -40,8 +40,8 @@ test('basic helpers without start', async (t) => {
 
   await fastify.register(fastifyAsyncForge)
 
-  p.strictEqual(logger(), undefined)
-  p.strictEqual(app(), undefined)
+  p.throws(logger)
+  p.throws(app)
 
   fastify.get('/', async function (_request, _reply) {
     p.strictEqual(app(), this)
