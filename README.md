@@ -56,7 +56,7 @@ If you need to alter the current asynchronous context, you can use the `enterWit
 ```js
 import { before, describe, it } from "node:test";
 import Fastify from "fastify";
-import { app, start } from "fastify-asyncforge";
+import asyncforge, { app, start } from "fastify-asyncforge";
 import assert from "node:assert/strict";
 
 let fastify;
@@ -64,8 +64,8 @@ let fastify;
 async function build(config) {
   const server = await Fastify();
 
+  server.register(asyncforge)
   server.decorate("config", config);
-  await start(server);
   console.log("config from memo", app().config);
 
   return server;
