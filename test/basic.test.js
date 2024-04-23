@@ -60,3 +60,32 @@ test('basic helpers without start', async (t) => {
 
   await p.complete
 })
+
+test('fastify.enterWith', async (t) => {
+  const p = tspl(t, { plan: 7 })
+  const fastify = Fastify()
+
+  await fastify.register(fastifyAsyncForge)
+
+  fastify.enterWith()
+
+  p.strictEqual(logger(), fastify.log)
+  p.strictEqual(app(), fastify)
+
+  fastify.get('/', async function (_request, _reply) {
+    p.strictEqual(app(), this)
+    p.strictEqual(request(), _request)
+    p.strictEqual(reply(), _reply)
+    p.strictEqual(logger(), _request.log)
+    return { hello: 'world' }
+  })
+
+  const res = await fastify.inject({
+    method: 'GET',
+    url: '/'
+  })
+
+  p.strictEqual(res.statusCode, 200)
+
+  await p.complete
+})

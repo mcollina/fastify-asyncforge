@@ -49,6 +49,45 @@ export default function doWork () {
 }
 ```
 
+### enterWith
+
+If you need to alter the current asynchronous context, you can use the `enterWith` helper.
+
+```js
+import { before, describe, it } from "node:test";
+import Fastify from "fastify";
+import { app, start } from "fastify-asyncforge";
+import assert from "node:assert/strict";
+
+let fastify;
+
+async function build(config) {
+  const server = await Fastify();
+
+  server.decorate("config", config);
+  await start(server);
+  console.log("config from memo", app().config);
+
+  return server;
+}
+
+describe("support exiting from a context", () => {
+  before(async () => {
+    fastify = await build({ foo: "bar" });
+  });
+
+  it("throws", () => {
+    assert.throws(app);
+  });
+
+  it("does not throw using enterWith", () => {
+    fastify.enterWith();
+    assert.equal(app(), fastify);
+  });
+});
+```
+
+
 ## License
 
 MIT

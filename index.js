@@ -3,12 +3,23 @@
 const fp = require('fastify-plugin')
 const { memo, setAll } = require('asyncforge')
 
-const app = memo()
-const request = memo()
-const reply = memo()
-const logger = memo()
+const app = memo('fastify.app')
+const request = memo('fastify.request')
+const reply = memo('fastify.reply')
+const logger = memo('fastify.logger')
 
 const fastifyAsyncForge = fp(function (fastify, opts, next) {
+  fastify.decorate('enterWith', function () {
+    try {
+      app()
+    } catch {
+      setAll({
+        [app.key]: this,
+        [logger.key]: this.log
+      })
+    }
+  })
+
   fastify.addHook('onRequest', async function (req, res) {
     setAll({
       [app.key]: this,
