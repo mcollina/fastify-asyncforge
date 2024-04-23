@@ -1,4 +1,4 @@
-import { expectAssignable, expectError, expectType } from "tsd";
+import { expectAssignable, expectError, expectType, expectNever } from "tsd";
 import fastifyasyncforge, { app, logger, reply, request, start } from ".";
 import fastify, {
   type FastifyInstance,
@@ -15,37 +15,59 @@ expectAssignable<FastifyInstance>(fastifyInstance.register(fastifyasyncforge));
 expectAssignable<FastifyPluginCallback>(fastifyasyncforge);
 
 // app
+const forgeApp = app();
+expectAssignable<FastifyInstance | undefined>(app());
 expectAssignable<FastifyInstance>(fastifyInstance);
-expectAssignable<FastifyInstance>(app());
-expectAssignable<FastifyInstance>(app<FastifyInstance<RawServerDefault>>());
-expectError<FastifyInstance>(app<string>());
-expectError<FastifyInstance>({});
+expectAssignable<FastifyInstance | undefined>(
+  app<FastifyInstance<RawServerDefault>>()
+);
+expectError<FastifyInstance | undefined>(app<string>());
+expectError<FastifyInstance | undefined>({});
+if (forgeApp) {
+  expectAssignable<FastifyInstance>(forgeApp);
+  expectAssignable<string>(forgeApp.version);
+  expectAssignable<string>(forgeApp.prefix);
+}
 
 // request
-expectType<FastifyRequest>(request());
-expectType<FastifyRequest>(request<FastifyRequest<RouteGenericInterface>>());
-expectError<FastifyRequest>(request<boolean>());
-expectType<unknown>(request().body);
-expectType<boolean>(request().is404);
-expectError<FastifyRequest>({});
+const forgeRequest = request();
+expectType<FastifyRequest | undefined>(forgeRequest);
+expectType<FastifyRequest | undefined>(
+  request<FastifyRequest<RouteGenericInterface>>()
+);
+expectError<FastifyRequest | undefined>({});
+expectError<FastifyRequest | undefined>(request<boolean>());
+if (forgeRequest) {
+  expectType<FastifyRequest>(forgeRequest);
+  expectType<unknown>(forgeRequest.body);
+  expectType<boolean>(forgeRequest.is404);
+}
 
 // reply
-expectType<FastifyReply>(reply());
-expectType<FastifyReply>(reply<FastifyReply<RawServerDefault>>());
-expectType<number>(reply().statusCode);
-expectType<boolean>(reply().sent);
-expectError<FastifyReply>(reply<number>());
-expectError<FastifyReply>({});
+const forgeReply = reply();
+expectType<FastifyReply | undefined>(forgeReply);
+expectType<FastifyReply | undefined>(reply<FastifyReply<RawServerDefault>>());
+expectError<FastifyReply | undefined>(reply<number>());
+expectError<FastifyReply | undefined>({});
+if (forgeReply) {
+  expectType<FastifyReply>(forgeReply);
+  expectType<number>(forgeReply.statusCode);
+  expectType<boolean>(forgeReply.sent);
+}
 
 // logger
-expectType<FastifyBaseLogger>(fastifyInstance.log);
-expectType<FastifyBaseLogger>(logger());
-expectType<FastifyBaseLogger>(logger<FastifyBaseLogger>());
-expectType<void>(logger().debug({ msg: "hey" }));
-expectType<void>(logger().info({ msg: "oh!" }));
-expectType<void>(logger().warn({ msg: "let's go!!!" }));
-expectError<FastifyBaseLogger>(logger<object>());
-expectError<FastifyBaseLogger>({});
+const forgeLogger = logger();
+expectAssignable<FastifyBaseLogger | undefined>(fastifyInstance.log);
+expectType<FastifyBaseLogger | undefined>(logger());
+expectType<FastifyBaseLogger | undefined>(logger<FastifyBaseLogger>());
+expectError<FastifyBaseLogger | undefined>(logger<object>());
+expectError<FastifyBaseLogger | undefined>({});
+if (forgeLogger) {
+  expectType<FastifyBaseLogger>(forgeLogger);
+  expectType<void>(forgeLogger.debug({ msg: "hey" }));
+  expectType<void>(forgeLogger.info({ msg: "oh!" }));
+  expectType<void>(forgeLogger.warn({ msg: "let's go!!!" }));
+}
 
 // start
 expectType<void>(await start(fastifyInstance));
