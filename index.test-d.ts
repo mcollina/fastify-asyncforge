@@ -13,10 +13,12 @@ import fastify, {
 const fastifyInstance = fastify();
 expectAssignable<FastifyInstance>(fastifyInstance.register(fastifyasyncforge));
 expectAssignable<FastifyPluginCallback>(fastifyasyncforge);
+expectType<void>(fastifyInstance.enterWith());
 
 // app
 expectAssignable<FastifyInstance>(fastifyInstance);
 expectAssignable<FastifyInstance>(app());
+expectType<void>(app().enterWith());
 expectAssignable<FastifyInstance>(app<FastifyInstance<RawServerDefault>>());
 expectError<FastifyInstance>(app<string>());
 expectError<FastifyInstance>({});
