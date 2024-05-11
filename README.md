@@ -1,5 +1,8 @@
 # fastify-asyncforge
 
+Provide easy [AsyncLocalStorage](https://nodejs.org/api/async_context.html) magic to your
+[Fastify](https://fastify.dev) apps. It's based on [asyncforge](http://npm.im/asyncforge).
+
 ## Install
 
 ```sh
@@ -18,6 +21,8 @@ const app = fastify({
   logger: true
 })
 
+// It's fundamental that `start` is called before any other plugins are registered, otherwise the helpers
+// would not work as expected
 await start(app)
 
 app.decorate('foo', 'bar')
