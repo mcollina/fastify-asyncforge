@@ -31,7 +31,7 @@ test('basic helpers with start', async (t) => {
 
   p.strictEqual(res.statusCode, 200)
 
-  await p.complete
+  await p.completed
 })
 
 test('basic helpers without start', async (t) => {
@@ -58,7 +58,7 @@ test('basic helpers without start', async (t) => {
 
   p.strictEqual(res.statusCode, 200)
 
-  await p.complete
+  await p.completed
 })
 
 test('fastify.enterWith', async (t) => {
@@ -87,7 +87,7 @@ test('fastify.enterWith', async (t) => {
 
   p.strictEqual(res.statusCode, 200)
 
-  await p.complete
+  await p.completed
 })
 
 test('with additional onRequest hook', async (t) => {
@@ -128,7 +128,7 @@ test('with additional onRequest hook', async (t) => {
 
   p.strictEqual(res.statusCode, 200)
 
-  await p.complete
+  await p.completed
 })
 
 test('onRequest hook added before registration fails', async (t) => {
@@ -169,5 +169,5 @@ test('onRequest hook added before registration fails', async (t) => {
 
   p.strictEqual(res.statusCode, 200)
 
-  await p.complete
+  await p.completed
 })

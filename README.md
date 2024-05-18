@@ -92,6 +92,32 @@ describe("support exiting from a context", () => {
 });
 ```
 
+## Usage together with other async_hooks tools (e.g. DataDog, OpenTelemetry, etc)
+
+If you are using `fastify-asyncforge` together with another `async_hooks` based tool,
+you __must__ call `start` without adding an intermediate async function.
+Alternatively, you'd need to use `.enterWith()`
+
+```js
+import fastify from 'fastify'
+import asyncforge from 'fastify-asyncforge'
+
+const fastify = Fastify()
+
+async function wrap () {
+  // This is necessary to make it throw
+  await 1
+  await asyncforge.start(fastify)
+}
+
+await wrap()
+
+// Calling .enterWith() is necessary or `asyncforge.app()` will throw
+fastify.enterWith()
+asyncforge.app()
+```
+
+If you are interested in knowing more, read https://github.com/nodejs/node/issues/53037.
 
 ## License
 
