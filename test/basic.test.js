@@ -89,3 +89,85 @@ test('fastify.enterWith', async (t) => {
 
   await p.complete
 })
+
+test('with additional onRequest hook', async (t) => {
+  const p = tspl(t, { plan: 15 })
+  const fastify = Fastify()
+
+  await fastifyAsyncForge.start(fastify)
+
+  p.strictEqual(logger(), fastify.log)
+  p.strictEqual(app(), fastify)
+
+  fastify.addHook('onRequest', async function b (_request, _reply) {
+    p.strictEqual(app(), this)
+    p.strictEqual(request(), _request)
+    p.strictEqual(reply(), _reply)
+    p.strictEqual(logger(), _request.log)
+  })
+
+  fastify.get('/', {
+    onRequest: async function a (_request, _reply) {
+      p.strictEqual(app(), this)
+      p.strictEqual(request(), _request)
+      p.strictEqual(reply(), _reply)
+      p.strictEqual(logger(), _request.log)
+    }
+  }, async function (_request, _reply) {
+    p.strictEqual(app(), this)
+    p.strictEqual(request(), _request)
+    p.strictEqual(reply(), _reply)
+    p.strictEqual(logger(), _request.log)
+    return { hello: 'world' }
+  })
+
+  const res = await fastify.inject({
+    method: 'GET',
+    url: '/'
+  })
+
+  p.strictEqual(res.statusCode, 200)
+
+  await p.complete
+})
+
+test('onRequest hook added before registration fails', async (t) => {
+  const p = tspl(t, { plan: 15 })
+  const fastify = Fastify()
+
+  fastify.addHook('onRequest', async function b (_request, _reply) {
+    p.strictEqual(app(), this)
+    p.strictEqual(logger(), fastify.log)
+    p.strictEqual(request(), undefined)
+    p.strictEqual(reply(), undefined)
+  })
+
+  await fastifyAsyncForge.start(fastify)
+
+  p.strictEqual(logger(), fastify.log)
+  p.strictEqual(app(), fastify)
+
+  fastify.get('/', {
+    onRequest: async function a (_request, _reply) {
+      p.strictEqual(app(), this)
+      p.strictEqual(request(), _request)
+      p.strictEqual(reply(), _reply)
+      p.strictEqual(logger(), _request.log)
+    }
+  }, async function (_request, _reply) {
+    p.strictEqual(app(), this)
+    p.strictEqual(request(), _request)
+    p.strictEqual(reply(), _reply)
+    p.strictEqual(logger(), _request.log)
+    return { hello: 'world' }
+  })
+
+  const res = await fastify.inject({
+    method: 'GET',
+    url: '/'
+  })
+
+  p.strictEqual(res.statusCode, 200)
+
+  await p.complete
+})
