@@ -8,7 +8,7 @@ const fastifyAsyncForge = require('../')
 const { app, request, reply, logger } = fastifyAsyncForge
 
 // Adding an async_hooks hook to make sure we catch the issue
-const hook = createHook({ init () {}})
+const hook = createHook({ init () {} })
 hook.enable()
 
 test('async_hooks lose context', async (t) => {
