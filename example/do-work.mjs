@@ -1,8 +1,6 @@
-'use strict'
+import { logger, app, request, reply } from '../index.js'
 
-const { logger, app, request, reply } = require('../')
-
-module.exports = function doWork () {
+export default function doWork () {
   const log = logger()
   log.info({
     foo: app().foo,
