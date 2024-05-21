@@ -18,6 +18,13 @@ const fastifyAsyncForge = fp(function (fastify, opts, next) {
     })
   })
 
+  fastify.decorate('enterWith', function () {
+    const store = create()
+    store.enterWith()
+    app.set(this)
+    logger.set(this.log)
+  })
+
   fastify.addHook('onRequest', function (req, res, next) {
     const store = create()
 

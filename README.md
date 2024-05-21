@@ -55,6 +55,26 @@ export default function doWork () {
 }
 ```
 
+## `.enterWith()`
+
+In case `.runInAsyncScope()` is incovenient, you can use `.enterWith()`
+
+```js
+import fastify from 'fastify'
+import asyncforge from 'fastify-asyncforge'
+
+const fastify = Fastify()
+
+// Calling .enterWith() is necessary or `asyncforge.app()` will throw
+fastify.enterWith()
+asyncforge.app()
+```
+
+### Notice
+
+Note that you cannot wrap `.enterWith()` inside an async function, as it will not work.
+If you are interested in knowing more, read https://github.com/nodejs/node/issues/53037.
+
 ## License
 
 MIT
