@@ -9,6 +9,7 @@ import {
 declare module "fastify" {
   interface FastifyInstance {
     runInAsyncScope<T> (fn: () => T) : T;
+    enterWith() : void
   }
 }
 

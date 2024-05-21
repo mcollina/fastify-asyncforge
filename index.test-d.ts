@@ -13,6 +13,7 @@ import fastify, {
 const fastifyInstance = fastify();
 expectAssignable<FastifyInstance>(fastifyInstance.register(fastifyasyncforge));
 expectAssignable<FastifyPluginCallback>(fastifyasyncforge);
+expectType<void>(fastifyInstance.enterWith());
 expectType<number>(fastifyInstance.runInAsyncScope(() => 42));
 
 // app
