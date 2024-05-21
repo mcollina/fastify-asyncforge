@@ -1,17 +1,15 @@
-'use strict'
-
-const fastify = require('fastify')
-const doWork = require('./do-work')
-const { logger, start } = require('../index')
+import fastify from 'fastify'
+import doWork from './do-work.mjs'
+import asyncforge, { logger } from '../index.js'
 
 const app = fastify({
   logger: true
 })
-app.register(require('../index'))
+await app.register(asyncforge)
 
-start(app)
-
-logger().info('hello')
+app.runInAsyncScope(() => {
+  logger().info('hello')
+})
 
 app.decorate('foo', 'bar')
 app.decorateRequest('a')

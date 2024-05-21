@@ -1,7 +1,7 @@
 'use strict'
 
 const fp = require('fastify-plugin')
-const { memo, setAll } = require('asyncforge')
+const { memo, create } = require('asyncforge')
 
 const app = memo('fastify.app')
 const request = memo('fastify.request')
@@ -9,39 +9,43 @@ const reply = memo('fastify.reply')
 const logger = memo('fastify.logger')
 
 const fastifyAsyncForge = fp(function (fastify, opts, next) {
-  fastify.decorate('enterWith', function () {
-    try {
-      app()
-    } catch {
-      setAll({
-        [app.key]: this,
-        [logger.key]: this.log
-      })
-    }
-  })
-
-  fastify.addHook('onRequest', async function (req, res) {
-    setAll({
-      [app.key]: this,
-      [request.key]: req,
-      [reply.key]: res,
-      [logger.key]: req.log
+  fastify.decorate('runInAsyncScope', function (fn) {
+    const store = create()
+    return store.run(() => {
+      app.set(this)
+      logger.set(this.log)
+      return fn()
     })
   })
-  next()
-})
 
-function start (fastify) {
-  setAll({
-    [app.key]: fastify,
-    [logger.key]: fastify.log
+  fastify.decorate('enterWith', function () {
+    const store = create()
+    store.enterWith()
+    app.set(this)
+    logger.set(this.log)
   })
 
-  return fastify.register(fastifyAsyncForge)
-}
+  fastify.addHook('onRequest', function (req, res, next) {
+    const store = create()
+
+    // We use callbacks because we cannot propagate through async/await
+    store.run(() => {
+      app.set(this)
+      request.set(req)
+      reply.set(res)
+      logger.set(req.log)
+      next()
+    })
+  })
+
+  create(() => {
+    app.set(fastify)
+    logger.set(fastify.log)
+    next()
+  })
+})
 
 module.exports = fastifyAsyncForge
-module.exports.start = start
 module.exports.app = app
 module.exports.request = request
 module.exports.reply = reply

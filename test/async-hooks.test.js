@@ -16,13 +16,7 @@ test('async_hooks lose context', async (t) => {
   const fastify = Fastify()
   t.after(() => fastify.close())
 
-  async function wrap () {
-    // This is necessary to make it throw
-    await 1
-    await fastifyAsyncForge.start(fastify)
-  }
-
-  await wrap()
+  await fastify.register(fastifyAsyncForge)
 
   // This is expected to throw due to https://github.com/nodejs/node/issues/53037
   p.throws(logger)
@@ -51,13 +45,8 @@ test('enterWith fixes it', async (t) => {
   const fastify = Fastify()
   t.after(() => fastify.close())
 
-  async function wrap () {
-    await 1
-    await fastifyAsyncForge.start(fastify)
-  }
-
-  await wrap()
-  await fastify.enterWith()
+  await fastify.register(fastifyAsyncForge)
+  fastify.enterWith()
 
   p.strictEqual(logger(), fastify.log)
   p.strictEqual(app(), fastify)

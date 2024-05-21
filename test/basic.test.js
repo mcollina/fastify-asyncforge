@@ -7,14 +7,16 @@ const fastifyAsyncForge = require('../')
 
 const { app, request, reply, logger } = fastifyAsyncForge
 
-test('basic helpers with start', async (t) => {
+test('basic helpers', async (t) => {
   const p = tspl(t, { plan: 7 })
   const fastify = Fastify()
 
-  await fastifyAsyncForge.start(fastify)
+  await fastify.register(fastifyAsyncForge)
 
-  p.strictEqual(logger(), fastify.log)
-  p.strictEqual(app(), fastify)
+  fastify.runInAsyncScope(() => {
+    p.strictEqual(logger(), fastify.log)
+    p.strictEqual(app(), fastify)
+  })
 
   fastify.get('/', async function (_request, _reply) {
     p.strictEqual(app(), this)
@@ -34,14 +36,16 @@ test('basic helpers with start', async (t) => {
   await p.completed
 })
 
-test('basic helpers without start', async (t) => {
+test('support in following plugin', async (t) => {
   const p = tspl(t, { plan: 7 })
   const fastify = Fastify()
 
-  await fastify.register(fastifyAsyncForge)
+  fastify.register(fastifyAsyncForge)
 
-  p.throws(logger)
-  p.throws(app)
+  fastify.register(async function (fastify, _opts) {
+    p.strictEqual(app(), Object.getPrototypeOf(fastify))
+    p.strictEqual(request(), undefined)
+  })
 
   fastify.get('/', async function (_request, _reply) {
     p.strictEqual(app(), this)
@@ -61,16 +65,20 @@ test('basic helpers without start', async (t) => {
   await p.completed
 })
 
-test('fastify.enterWith', async (t) => {
-  const p = tspl(t, { plan: 7 })
+test('support in following plugin with await ', async (t) => {
+  const p = tspl(t, { plan: 9 })
   const fastify = Fastify()
 
   await fastify.register(fastifyAsyncForge)
 
-  fastify.enterWith()
-
-  p.strictEqual(logger(), fastify.log)
-  p.strictEqual(app(), fastify)
+  fastify.register(async function (fastify, _opts) {
+    p.throws(app)
+    p.throws(request)
+    fastify.runInAsyncScope(() => {
+      p.strictEqual(app(), fastify)
+      p.strictEqual(request(), undefined)
+    })
+  })
 
   fastify.get('/', async function (_request, _reply) {
     p.strictEqual(app(), this)
@@ -94,10 +102,12 @@ test('with additional onRequest hook', async (t) => {
   const p = tspl(t, { plan: 15 })
   const fastify = Fastify()
 
-  await fastifyAsyncForge.start(fastify)
+  await fastify.register(fastifyAsyncForge)
 
-  p.strictEqual(logger(), fastify.log)
-  p.strictEqual(app(), fastify)
+  fastify.runInAsyncScope(() => {
+    p.strictEqual(logger(), fastify.log)
+    p.strictEqual(app(), fastify)
+  })
 
   fastify.addHook('onRequest', async function b (_request, _reply) {
     p.strictEqual(app(), this)
@@ -136,16 +146,18 @@ test('onRequest hook added before registration fails', async (t) => {
   const fastify = Fastify()
 
   fastify.addHook('onRequest', async function b (_request, _reply) {
-    p.strictEqual(app(), this)
-    p.strictEqual(logger(), fastify.log)
-    p.strictEqual(request(), undefined)
-    p.strictEqual(reply(), undefined)
+    p.throws(app)
+    p.throws(logger)
+    p.throws(request)
+    p.throws(reply)
   })
 
-  await fastifyAsyncForge.start(fastify)
+  await fastify.register(fastifyAsyncForge)
 
-  p.strictEqual(logger(), fastify.log)
-  p.strictEqual(app(), fastify)
+  fastify.runInAsyncScope(() => {
+    p.strictEqual(logger(), fastify.log)
+    p.strictEqual(app(), fastify)
+  })
 
   fastify.get('/', {
     onRequest: async function a (_request, _reply) {
@@ -155,6 +167,35 @@ test('onRequest hook added before registration fails', async (t) => {
       p.strictEqual(logger(), _request.log)
     }
   }, async function (_request, _reply) {
+    p.strictEqual(app(), this)
+    p.strictEqual(request(), _request)
+    p.strictEqual(reply(), _reply)
+    p.strictEqual(logger(), _request.log)
+    return { hello: 'world' }
+  })
+
+  const res = await fastify.inject({
+    method: 'GET',
+    url: '/'
+  })
+
+  p.strictEqual(res.statusCode, 200)
+
+  await p.completed
+})
+
+test('basic helpers with start', async (t) => {
+  const p = tspl(t, { plan: 7 })
+  const fastify = Fastify()
+
+  await fastify.register(fastifyAsyncForge)
+
+  fastify.runInAsyncScope(() => {
+    p.strictEqual(logger(), fastify.log)
+    p.strictEqual(app(), fastify)
+  })
+
+  fastify.get('/', async function (_request, _reply) {
     p.strictEqual(app(), this)
     p.strictEqual(request(), _request)
     p.strictEqual(reply(), _reply)
