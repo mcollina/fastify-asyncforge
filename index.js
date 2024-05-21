@@ -9,10 +9,13 @@ const reply = memo('fastify.reply')
 const logger = memo('fastify.logger')
 
 const fastifyAsyncForge = fp(function (fastify, opts, next) {
-  const store = create()
-
   fastify.decorate('runInAsyncScope', function (fn) {
-    return store.run(fn)
+    const store = create()
+    return store.run(() => {
+      app.set(this)
+      logger.set(this.log)
+      return fn()
+    })
   })
 
   fastify.addHook('onRequest', function (req, res, next) {
@@ -28,7 +31,7 @@ const fastifyAsyncForge = fp(function (fastify, opts, next) {
     })
   })
 
-  store.run(() => {
+  create(() => {
     app.set(fastify)
     logger.set(fastify.log)
     next()
