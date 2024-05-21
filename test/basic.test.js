@@ -7,7 +7,7 @@ const fastifyAsyncForge = require('../')
 
 const { app, request, reply, logger } = fastifyAsyncForge
 
-test('basic helpers with start', async (t) => {
+test('basic helpers', async (t) => {
   const p = tspl(t, { plan: 7 })
   const fastify = Fastify()
 
