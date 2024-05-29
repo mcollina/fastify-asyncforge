@@ -1,5 +1,5 @@
 import { expectAssignable, expectError, expectType } from "tsd";
-import fastifyasyncforge, { app, logger, reply, request, start } from ".";
+import fastifyasyncforge, { app, logger, reply, request } from ".";
 import fastify, {
   type FastifyInstance,
   type FastifyBaseLogger,
@@ -48,8 +48,3 @@ expectType<void>(logger().info({ msg: "oh!" }));
 expectType<void>(logger().warn({ msg: "let's go!!!" }));
 expectError<FastifyBaseLogger>(logger<object>());
 expectError<FastifyBaseLogger>({});
-
-// start
-expectType<void>(await start(fastifyInstance));
-expectError<void>(await start({ invalid: "object" }));
-expectError<void>(await start());
