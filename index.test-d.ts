@@ -48,8 +48,3 @@ expectType<void>(logger().info({ msg: "oh!" }));
 expectType<void>(logger().warn({ msg: "let's go!!!" }));
 expectError<FastifyBaseLogger>(logger<object>());
 expectError<FastifyBaseLogger>({});
-
-// start
-expectType<void>(await start(fastifyInstance));
-expectError<void>(await start({ invalid: "object" }));
-expectError<void>(await start());

@@ -8,8 +8,8 @@ import {
 
 declare module "fastify" {
   interface FastifyInstance {
-    runInAsyncScope<T> (fn: () => T) : T;
-    enterWith() : void
+    runInAsyncScope<T>(fn: () => T): T;
+    enterWith(): void;
   }
 }
 
@@ -18,7 +18,6 @@ declare namespace fastifyasyncforge {
   export function request<T extends FastifyRequest>(): T;
   export function reply<T extends FastifyReply>(): T;
   export function logger<T extends FastifyBaseLogger>(): T;
-  export function start(app: FastifyInstance): Promise<void>;
 }
 
 declare function fastifyasyncforge(): FastifyPluginCallback;
